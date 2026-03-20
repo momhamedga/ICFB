@@ -51,6 +51,7 @@ export async function deleteEventAction(id: string) {
 
 // 4. تحديث فعالية
 // 4. تحديث فعالية
+// 4. تحديث فعالية
 export async function updateEventAction(id: string, formData: any) {
   try {
     // 1. معالجة التاريخ لضمان أنه بصيغة YYYY-MM-DD
@@ -58,25 +59,17 @@ export async function updateEventAction(id: string, formData: any) {
       ? formData.date.toISOString().split('T')[0] 
       : formData.date;
 
-    // 2. تحديث البيانات في قاعدة البيانات
+    // 2. تحديث البيانات في قاعدة البيانات (Supabase)
     const data = await eventService.updateEvent(id, {
       title: formData.title,
       category: formData.category,
       date: formattedDate 
     });
 
-    // 3. إعادة التحقق من الكاش (Revalidation) بأسلوب آمن
-    // استخدمنا revalidatePath لأنه الأشمل والأضمن في Next.js 15 حالياً
-    try {
-        revalidatePath("/events"); 
-        revalidatePath("/admin/events");
-        
-        // إذا كان TypeScript لا يزال يعترض على revalidateTag بـ argument واحد، 
-        // فـ revalidatePath كافية جداً لأداء المهمة.
-        // revalidateTag("events-list"); 
-    } catch (revalidateError) {
-        console.warn("Revalidation non-critical error:", revalidateError);
-    }
+    // 3. إعادة تحديث الكاش (Revalidation) - الطريقة الأضمن لـ Next.js 15
+    // استخدمنا revalidatePath لأنه بيغني عن الـ Tag في أغلب الحالات وبيعدي من الـ Build
+    revalidatePath("/events"); 
+    revalidatePath("/admin/events");
 
     return data;
   } catch (error) {
