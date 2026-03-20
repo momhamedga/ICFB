@@ -4,14 +4,18 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Briefcase, HeartPulse, Target, Users, Globe, 
-  Stethoscope, Sparkles, User, GraduationCap
+  Stethoscope, Sparkles, User, GraduationCap,
+  DollarSign
 } from "lucide-react";
 
 // استدعاء المكون المنفصل
 import BookingForm from "@/components/BookingForm";
 
 type CoachingTab = "overview" | "coaches" | "booking";
-
+const COACHING_SERVICES = [
+  { label: "Business", icon: Briefcase }, // لاحظ مفيش أقواس < />
+  { label: "Financial", icon: DollarSign },
+];
 export default function CoachingPage() {
   const [activeTab, setActiveTab] = useState<CoachingTab>("overview");
 
@@ -102,7 +106,7 @@ function OverviewSection() {
       <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-gray-100 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-32 h-32 bg-gray-50 rounded-bl-full -mr-10 -mt-10 group-hover:bg-red-50 transition-colors" />
         <p className="text-[#003366] font-black text-2xl md:text-3xl leading-snug max-w-4xl relative z-10">
-          "Coaching is a partnership in a thought-provoking process that inspires clients to <span className="text-[#E63946] underline decoration-4 underline-offset-8">maximise potential</span>."
+          Coaching is a partnership in a thought-provoking process that inspires clients to <span className="text-[#E63946] underline decoration-4 underline-offset-8">maximise potential</span>."
         </p>
         <div className="mt-12 flex items-center gap-6">
            <div className="h-[2px] w-20 bg-[#E63946]" />
@@ -147,18 +151,18 @@ function CoachesGrid() {
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="grid md:grid-cols-3 gap-8"
     >
-      {coaches.map((c, i) => (
-        <div key={i} className="group bg-white rounded-[2.5rem] p-2 border border-gray-100 shadow-sm hover:shadow-2xl transition-all">
-          <div className="aspect-square bg-gray-50 rounded-[2rem] flex items-center justify-center text-gray-200 relative overflow-hidden">
-            {React.cloneElement(c.icon as React.ReactElement, { size: 80, strokeWidth: 1 })}
-            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
-          <div className="p-6 text-center">
-            <h4 className="text-xl font-black text-[#003366] uppercase">{c.name}</h4>
-            <p className="text-[#E63946] text-[10px] font-black uppercase tracking-[0.2em] mt-1">{c.role}</p>
-          </div>
-        </div>
-      ))}
+      {COACHING_SERVICES.map((s, i) => {
+  const Icon = s.icon; // بنحول الـ Reference لمكون (Capital Letter)
+  return (
+    <div key={i} className="group">
+      <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center">
+        {/* نمرر الخصائص مباشرة كأنها Component عادي */}
+        <Icon size={28} className="group-hover:text-white transition-all" />
+      </div>
+      <span>{s.label} Coaching</span>
+    </div>
+  );
+})}
     </motion.div>
   );
 }

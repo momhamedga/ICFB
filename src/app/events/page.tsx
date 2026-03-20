@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import EventsClientPage from "./eventsPrev"; 
 import EventsSkeleton from "./EventsSkeleton"; 
-// استيراد الدالة الصحيحة للجلب
 import { getAllEvents } from "../actions/events"; 
 
 export const metadata: Metadata = {
@@ -11,13 +10,14 @@ export const metadata: Metadata = {
 };
 
 export default async function EventsPage() {
-  // جلب الـ Promise الخاصة بجميع الفعاليات
+  // 1. ابدأ جلب البيانات (بدون await هنا عشان نمررها كـ Promise)
   const eventsPromise = getAllEvents();
 
   return (
     <main className="bg-[#fafafa] min-h-screen">
+      {/* 2. الـ Suspense هيظهر الـ Skeleton لحد ما الـ Promise تجهز */}
       <Suspense fallback={<EventsSkeleton />}>
-        {/* نمرر الـ Promise لـ eventsPrev ليقوم بعرضها */}
+        {/* 3. بنمرر الـ Promise كاملة للمكون العميل */}
         <EventsClientPage eventsPromise={eventsPromise} />
       </Suspense>
     </main>
