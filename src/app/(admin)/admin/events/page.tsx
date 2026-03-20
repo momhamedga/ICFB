@@ -2,7 +2,8 @@ import { eventService } from "@/services/adminService";
 
 import { Suspense } from "react";
 import EventPageAll from "./eventsPage";
-
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 export default function Page() {
   // بنجيب الـ Promise هنا وبنبعته للـ Client Component
   const eventsPromise = eventService.getAllEvents();

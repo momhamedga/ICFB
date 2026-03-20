@@ -1,7 +1,8 @@
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import ModifyCourseClient from "./ModifyCourseClient";
-
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 export async function generateStaticParams() {
   // صمام أمان لو الـ Env variables مش موجودة وقت الـ Build في الـ CI/CD
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
