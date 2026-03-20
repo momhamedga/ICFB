@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, Search, Download, Copy, AlertCircle, Loader2, Check } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { Certificate } from "crypto";
+import { Certificate } from "@/types/certificate";
 
 export default function CertificateVerifier() {
   const [certCode, setCertCode] = useState<string>("");
