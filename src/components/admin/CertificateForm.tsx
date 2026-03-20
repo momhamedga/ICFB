@@ -161,7 +161,7 @@ export default function CertificateForm() {
             </label>
             <DatePicker
               selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              onChange={(date: Date | null) => setStartDate(date)}
               dateFormat="dd/MM/yyyy"
               className="w-full p-4 bg-zinc-50 rounded-2xl outline-none font-bold text-zinc-800 cursor-pointer focus:ring-2 focus:ring-rose-100/50"
             />
