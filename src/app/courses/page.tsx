@@ -11,7 +11,7 @@ async function getCourses() {
     .order("created_at", { ascending: false });
   return data || [];
 }
-
+export const dynamic = 'force-dynamic';
 export default function Page() {
   // جلب الـ Promise
   const coursesPromise = getCourses();

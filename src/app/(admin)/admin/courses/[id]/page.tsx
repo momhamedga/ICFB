@@ -2,10 +2,16 @@ import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import ModifyCourseClient from "./ModifyCourseClient";
 
-// 1. تحسين الأداء: توليد الصفحات مسبقاً (اختياري لكن ينصح به)
 export async function generateStaticParams() {
-  const { data: courses } = await supabase.from("courses").select("id");
-  return courses?.map((course) => ({ id: course.id })) || [];
+  // حددنا نوع البيانات اللي راجعة إنها مصفوفة فيها id من نوع string أو number
+  const { data: courses } = await supabase
+    .from("courses")
+    .select("id") as { data: { id: string }[] | null };
+
+  // دلوقتي TypeScript عارف إن course جواه id
+  return courses?.map((course) => ({ 
+    id: course.id.toString() 
+  })) || [];
 }
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Events Protocol | Ultra-Modern Experiences",
   description: "Join our professional evolution events and institutional workshops.",
 };
-
+export const dynamic = 'force-dynamic';
 export default async function EventsPage() {
   const eventsPromise = getAllEvents();
 

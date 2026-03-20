@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Loader2, AlertCircle } from "lucide-react";
 import { verifyCertificateAction } from "@/app/actions/certificate";
@@ -9,21 +9,35 @@ import { StatusBadge } from "./StatusBadge";
 import { CertificateCard } from "./CertificateCard";
 
 export default function CertificateVerifier() {
-  const [certCode, setCertCode] = useState("");
+  const [certCode, setCertCode] = useState<string>("");
   const [result, setResult] = useState<Certificate | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+const [loading, setLoading] = useState<boolean>(false); // استبدلنا isPending بـ loading عادي
+const handleVerify = async () => {
+    if (!certCode.trim()) return;
 
-  const handleVerify = () => {
-    startTransition(async () => {
-      setError(null);
-      setResult(null);
-      const { data, error: actionError } = await verifyCertificateAction(certCode);
-      if (actionError) setError(actionError);
-      else setResult(data || null);
-    });
+    setLoading(true); // بدأنا التحميل
+    setError(null);
+    setResult(null);
+
+    try {
+      const response = await verifyCertificateAction(certCode);
+
+      if (!response.success) {
+        setError(response.message || "Invalid credential.");
+      } else {
+        setResult(response.data || null);
+        
+        if (response.data?.cert_code) {
+          localStorage.setItem("active_cert", response.data.cert_code);
+        }
+      }
+    } catch (err) {
+      setError("Connection failed. Please try again.");
+    } finally {
+      setLoading(false); // قفلنا التحميل
+    }
   };
-
   return (
     <section className="relative py-12 md:py-24 px-4 overflow-hidden min-h-[90vh] flex items-center justify-center">
       {/* Dynamic Background Effects */}
@@ -35,7 +49,7 @@ export default function CertificateVerifier() {
         <div className="text-center mb-12">
           <StatusBadge />
           <h2 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tighter italic leading-[0.9]">
-            Verify <span className="text-[#d32f2f] block md:inline">Authenticity</span>
+            Verify <span className="text-primary block md:inline">Authenticity</span>
           </h2>
         </div>
 
@@ -53,10 +67,10 @@ export default function CertificateVerifier() {
             />
             <button 
               onClick={handleVerify}
-              disabled={isPending}
+              disabled={loading}
               className="px-6 md:px-10 py-4 bg-zinc-900 text-white rounded-[22px] md:rounded-[24px] font-black text-[10px] uppercase tracking-widest active:scale-95 disabled:opacity-50 transition-all"
             >
-              {isPending ? <Loader2 className="animate-spin" size={18} /> : "Check"}
+              {loading ? <Loader2 className="animate-spin" size={18} /> : "Check"}
             </button>
           </div>
         </div>
