@@ -3,17 +3,24 @@ import { notFound } from "next/navigation";
 import ModifyCourseClient from "./ModifyCourseClient";
 
 export async function generateStaticParams() {
-  // حددنا نوع البيانات اللي راجعة إنها مصفوفة فيها id من نوع string أو number
-  const { data: courses } = await supabase
-    .from("courses")
-    .select("id") as { data: { id: string }[] | null };
+  // صمام أمان لو الـ Env variables مش موجودة وقت الـ Build في الـ CI/CD
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    return [];
+  }
 
-  // دلوقتي TypeScript عارف إن course جواه id
-  return courses?.map((course) => ({ 
-    id: course.id.toString() 
-  })) || [];
+  try {
+    const { data: courses } = await supabase
+      .from("courses")
+      .select("id") as { data: { id: string }[] | null };
+
+    return courses?.map((course) => ({ 
+      id: course.id.toString() 
+    })) || [];
+  } catch (error) {
+    console.error("Build-time fetch error:", error);
+    return []; // بنرجع فاضي عشان الـ Build يكمل والباقي يتولد Dynamic
+  }
 }
-
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   // 2. فك تشفير الـ ID باستخدام await (Standard 2026)
   const { id } = await params;
