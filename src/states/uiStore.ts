@@ -1,4 +1,5 @@
 // src/states/uiStore.ts
+import { Briefcase, Calendar, Trophy, Users } from 'lucide-react';
 import { create } from 'zustand';
 
 // تعريف شكل البيانات (Typescript Interface)
@@ -51,3 +52,19 @@ export const useUIStore = create<UIState>((set) => ({
 
   setSection: (section) => set({ activeSection: section }),
 }));
+
+
+// --- 3. Main Component ---
+export const SKILLS = [
+  { label: "Business Planning", value: 92 },
+  { label: "Financial Advices", value: 90 },
+  { label: "Investment Strategy", value: 85 },
+  { label: "Business Security", value: 95 },
+];
+
+export const STATS = [
+  { icon: Briefcase, count: "582", label: "Projects completed for our respected clients." },
+  { icon: Users, count: "215+", label: "Experienced professionals serving to clients." },
+  { icon: Calendar, count: "30+", label: "Years experience in business & consulting." },
+  { icon: Trophy, count: "70+", label: "Business & consulting awards won over world." },
+];
