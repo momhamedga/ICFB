@@ -5,6 +5,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Send, User, Mail, Phone, MessageSquare, ChevronDown, Check, Loader2, CheckCircle2 } from "lucide-react";
 import emailjs from "@emailjs/browser";
 
+// --- Types & Constants ---
+const coachingOptions = [
+  "Executive Coaching",
+  "Cancer Coaching",
+  "Career Coaching",
+  "Team Coaching"
+] as const;
+
+// استخراج النوع من المصفوفة لضمان تطابق الـ State مع الخيارات
+type CoachingType = typeof coachingOptions[number];
+
 // --- Custom Mission Toast Component ---
 const MissionToast = ({ show }: { show: boolean }) => (
   <AnimatePresence>
@@ -27,21 +38,17 @@ const MissionToast = ({ show }: { show: boolean }) => (
   </AnimatePresence>
 );
 
-const coachingOptions = [
-  "Executive Coaching",
-  "Cancer Coaching",
-  "Career Coaching",
-  "Team Coaching"
-] as const;
-
 export default function BookingForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [selectedType, setSelectedType] = useState(coachingOptions[0]);
+  
+  // ✅ الحل النهائي للـ Type Error: تحديد النوع بشكل صريح
+  const [selectedType, setSelectedType] = useState<CoachingType>(coachingOptions[0]);
 
   useEffect(() => {
+    // يفضل استخدام متغيرات البيئة هنا لاحقاً
     emailjs.init("--El8BxMZ5vR8E2gj");
   }, []);
 
@@ -52,14 +59,15 @@ export default function BookingForm() {
 
     try {
       await emailjs.sendForm(
-        "service_pexoox8", // Service ID من لقطة الشاشة الخاصة بك
-        "template_zoax5ud", // Template ID من لقطة الشاشة الخاصة بك
+        "service_pexoox8",
+        "template_zoax5ud",
         formRef.current,
         "--El8BxMZ5vR8E2gj"
       );
 
       setShowToast(true);
       formRef.current.reset();
+      setSelectedType(coachingOptions[0]); // إعادة التعيين للقيمة الافتراضية
       setTimeout(() => setShowToast(false), 4000);
     } catch (error) {
       console.error("Critical Failure:", error);
@@ -91,17 +99,19 @@ export default function BookingForm() {
           onSubmit={sendBooking} 
           className="grid grid-cols-1 lg:grid-cols-2 gap-10 bg-[#001429] p-8 md:p-16 rounded-[4rem] shadow-2xl relative"
         >
+          {/* Section 01: Personal Identity */}
           <div className="space-y-10">
             <header className="flex items-center gap-4">
               <span className="text-red-600 font-black text-xs tracking-tighter">01.</span>
               <h3 className="text-white/90 text-xs font-black uppercase tracking-[0.3em]">Personal Identity</h3>
             </header>
             
-            <CustomInput label="Full Name" name="name" icon={<User size={18} />} placeholder="Agent Name" />
-            <CustomInput label="Digital Address" name="email" type="email" icon={<Mail size={18} />} placeholder="email@secure.io" />
+            <CustomInput label="Full Name" name="from_name" icon={<User size={18} />} placeholder="Agent Name" />
+            <CustomInput label="Digital Address" name="reply_to" type="email" icon={<Mail size={18} />} placeholder="email@secure.io" />
             <CustomInput label="Global Link" name="phone" icon={<Phone size={18} />} placeholder="+971 -- --- ----" />
           </div>
 
+          {/* Section 02: Mission Scope */}
           <div className="space-y-10">
             <header className="flex items-center gap-4">
               <span className="text-red-600 font-black text-xs tracking-tighter">02.</span>
@@ -110,7 +120,9 @@ export default function BookingForm() {
 
             <div className="space-y-3 relative">
               <label className="text-[10px] font-black uppercase text-white/20 tracking-widest ml-2">Specialization</label>
-              <input type="hidden" name="type" value={selectedType} />
+              {/* حقل مخفي لإرسال القيمة عبر EmailJS */}
+              <input type="hidden" name="coaching_type" value={selectedType} />
+              
               <div 
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-between p-6 bg-white/[0.03] border border-white/5 rounded-3xl cursor-pointer hover:bg-white/[0.06] transition-all"
@@ -143,13 +155,19 @@ export default function BookingForm() {
               <label className="text-[10px] font-black uppercase text-white/20 tracking-widest ml-2">Intelligence Brief</label>
               <div className="flex gap-4 p-6 bg-white/[0.03] border border-white/5 rounded-[2rem]">
                 <MessageSquare className="text-white/10" size={18} />
-                <textarea name="message" rows={4} placeholder="Provide mission details..." className="w-full bg-transparent outline-none font-bold text-white/90 placeholder:text-white/5 resize-none" />
+                <textarea 
+                  name="message" 
+                  rows={4} 
+                  placeholder="Provide mission details..." 
+                  className="w-full bg-transparent outline-none font-bold text-white/90 placeholder:text-white/5 resize-none" 
+                />
               </div>
             </div>
           </div>
 
           <div className="lg:col-span-2 pt-6">
             <motion.button 
+              type="submit"
               disabled={loading}
               whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}
               className="w-full h-24 bg-red-600 text-white rounded-[2.5rem] font-black text-2xl uppercase tracking-[0.3em] flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(220,38,38,0.3)] disabled:opacity-50"
