@@ -81,3 +81,72 @@ body {
   background-color: var(--color-primary) !important;
   border-radius: 10px !important;
 }
+/* --- Custom Modern Scrollbar Protocol --- */
+
+/* 1. التخصيص للمتصفحات الحديثة (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px; /* عرض نحيف جداً وأنيق */
+  height: 8px;
+}
+
+/* خلفية المجرى - نجعلها شفافة تماماً لدمجها مع الـ Grid Background */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* المقبض (Thumb) - هنا يكمن الإبداع */
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 51, 102, 0.1); /* لون أزرق خافت جداً في البداية */
+  border-radius: 100px;
+  border: 2px solid transparent; /* مسافة أمان تجعل الشريط يبدو "عائماً" */
+  background-clip: content-box;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* عند التحويم (Hover) - يتحول للهوية الحمراء النيون */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #E63946;
+  box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
+}
+
+/* عند الضغط (Active) - يصبح أكثر حدة */
+::-webkit-scrollbar-thumb:active {
+  background-color: #b91c1c;
+}
+
+/* 2. التخصيص لمتصفح Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(230, 57, 70, 0.4) transparent;
+}
+
+/* 3. لمسة إبداعية للموبايل (Touch Devices) */
+@media (max-width: 768px) {
+  /* في الموبايل، يفضل إخفاء الشريط تماماً أو جعله نحيفاً جداً لتوفير مساحة الرؤية */
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(230, 57, 70, 0.2); /* لمسة حمراء خفيفة جداً */
+  }
+}
+
+/* 4. كلاس إضافي للـ Containers الداخلية اللي فيها سكرول */
+.custom-scroll-area {
+  overflow-y: auto;
+  scrollbar-gutter: stable; /* يمنع اهتزاز المحتوى عند ظهور الشريط */
+}
+
+/* 5. Progress Indicator (اختياري لكنه مبدع) */
+/* إذا أردت شريط تقدم علوي يملأ الصفحة أثناء السكرول */
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, #003366, #E63946);
+  transform-origin: 0%;
+  z-index: 9999;
+}

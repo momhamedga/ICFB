@@ -1,52 +1,59 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
-    request: { headers: request.headers },
+    request: {
+      headers: request.headers,
+    },
   })
 
+  // استخراج القيم مع فحص أمان
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY 
+    || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY // جرب الاسم القديم كخطة بديلة
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    // إذا القيم ناقصة، لا تكسر الموقع، فقط أكمل الطلب وسجل الخطأ في السيرفر
+    console.error("❌ Middleware Error: Supabase keys are missing in Environment Variables")
+    return response
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
-        get(name: string) { return request.cookies.get(name)?.value },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({ name, value, ...options })
-          response = NextResponse.next({ request: { headers: request.headers } })
-          response.cookies.set({ name, value, ...options })
+        getAll() {
+          return request.cookies.getAll()
         },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({ name, value, ...options })
-          response = NextResponse.next({ request: { headers: request.headers } })
-          response.cookies.set({ name, value, ...options })
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          )
         },
       },
     }
   )
 
+  // قم بحماية المسارات (مثال: لوحة الآدمن)
   const { data: { user } } = await supabase.auth.getUser()
-  const url = request.nextUrl.clone()
-
-  // 1. حماية صفحات الأدمن (تعتمد على Auth)
-  if (url.pathname.startsWith('/admin')) {
-    const isLoginPage = url.pathname === '/admin/login'
-    if (!user && !isLoginPage) {
-      return NextResponse.redirect(new URL('/admin/login', request.url))
-    }
-    if (user && isLoginPage) {
-      return NextResponse.redirect(new URL('/admin', request.url))
-    }
+  
+  if (request.nextUrl.pathname.startsWith('/admin') && !user) {
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // 2. حماية صفحات الطالب (تعتمد على الكود وليس Auth)
-  // نترك الحماية هنا لداخل الصفحات (Client-side) لأن الطالب ليس له User Object في Supabase Auth
-  
   return response
 }
 
 export const config = {
-  // نقوم بحماية مسارات الأدمن فقط عبر الميدل وير لمنع تعارض الـ Sessions
-  matcher: ['/admin/:path*'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 }

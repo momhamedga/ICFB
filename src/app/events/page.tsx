@@ -10,14 +10,16 @@ export const metadata: Metadata = {
 };
 
 export default async function EventsPage() {
-  // 1. ابدأ جلب البيانات (بدون await هنا عشان نمررها كـ Promise)
   const eventsPromise = getAllEvents();
 
   return (
-    <main className="bg-[#fafafa] min-h-screen">
-      {/* 2. الـ Suspense هيظهر الـ Skeleton لحد ما الـ Promise تجهز */}
+    <main className="relative min-h-screen  overflow-hidden">
+      {/* Blueprint Grid Background */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:60px_60px]" />
+      </div>
+
       <Suspense fallback={<EventsSkeleton />}>
-        {/* 3. بنمرر الـ Promise كاملة للمكون العميل */}
         <EventsClientPage eventsPromise={eventsPromise} />
       </Suspense>
     </main>

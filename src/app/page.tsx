@@ -1,11 +1,11 @@
-import CertificateVerifier from "@/components/CertificateVerifier";
-import HeroSection from "@/components/Hero";
-import MentoringServices from "@/components/MentoringServices";
-import ServicesSection from "@/components/Services";
-import StatsSection from "@/components/StatsSection";
-import WhyChooseSection from "@/components/WhyChooseSection";
+import CertificateVerifier from "@/components/certificate/CertificateVerifier";
+import HeroSection from "@/components/hero/Hero";
+import MentoringServices from "@/components/MentoringServices/MentoringServices";
+import ServicesSection from "@/components/services/Services";
+import StatsSection from "@/components/Stats/StatsSection";
+import WhyChooseSection from "@/components/WhyChoose/WhyChooseSection";
 import { supabase } from "@/lib/supabase";
-import QualificationsPreview from "@/components/QualificationsPreview";
+import QualificationsPreview from "@/components/Qualification/QualificationsPreview";
 
 export default async function Home() {
   const { data: qualifications } = await supabase
@@ -14,14 +14,15 @@ export default async function Home() {
     .limit(3)
     .order("created_at", { ascending: false });
 
-  return (
-    <main className="relative min-h-screen">
-      <div className="bg-premium" />
+return (
+    // 1. شلنا الـ min-h-screen والـ bg-premium لأن الـ Layout بيقوم بالدور ده
+    <div className="relative"> 
       
       <div className="relative z-10">
         <HeroSection />
         
-        <div className="relative z-20 bg-white"> 
+        {/* 2. بدل bg-white الصريح، نستخدم شفافية بسيطة أو نعتمد على خلفية الـ Layout */}
+        <div className="relative z-20 bg-white/80 backdrop-blur-md"> 
            <ServicesSection />
         </div>
 
@@ -29,12 +30,11 @@ export default async function Home() {
            <WhyChooseSection />
         </div>
 
-        {/* هذا هو القسم الذي كان يختفي - الآن سيظهر دائماً */}
         <div id="qualifications-section" className="relative z-40"> 
           <QualificationsPreview data={qualifications || []} />
         </div>
 
-        <div className="relative z-50 bg-white"> 
+        <div className="relative z-50 bg-white/80 backdrop-blur-md"> 
            <MentoringServices />
         </div>
 
@@ -42,10 +42,11 @@ export default async function Home() {
            <CertificateVerifier />
         </div>
 
-        <div className="relative z-60 bg-[#002d5b]"> 
+        {/* 3. القسم الأخير قبل الفوتر مباشرة - لازم يلحم مع الفوتر */}
+        <div className="relative z-[60] bg-[#002d5b]"> 
            <StatsSection />
         </div>
       </div>
-    </main>
+    </div>
   );
 }

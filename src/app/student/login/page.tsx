@@ -59,7 +59,7 @@ export default function StudentLogin() {
         </div>
 
         <div className="text-center mb-10">
-          <h1 className="text-4xl font-black text-zinc-900 tracking-tighter">
+          <h1 className="text-4xl font-black text-[#003366] tracking-tighter">
             Student <span className="text-[#d32f2f]">Portal</span>
           </h1>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 mt-2">
@@ -113,7 +113,7 @@ export default function StudentLogin() {
 
           <button 
             disabled={isPending}
-            className="w-full py-6 bg-zinc-900 text-white rounded-[28px] font-black uppercase tracking-widest hover:bg-[#d32f2f] transition-all shadow-xl active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3"
+            className="w-full py-6 bg-[#003366] text-white rounded-[28px] font-black uppercase tracking-widest hover:bg-[#d32f2f] transition-all shadow-xl active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3"
           >
             {isPending ? <Loader2 className="animate-spin" /> : <>Initialize Access <ArrowRight size={20} /></>}
           </button>

@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight, Cpu, Zap, Activity } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function VisionSection() {
     // مصفوفة بسيطة للقيم المضافة لتعزيز المحتوى بصرياً
@@ -49,10 +50,13 @@ export default function VisionSection() {
                     ))}
                 </div>
 
-                <button className="group flex items-center gap-4 bg-[#003366] text-white px-10 py-6 rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-[#E63946] transition-all shadow-xl hover:shadow-[#E63946]/20">
+                <Link href={"/contact"}>
+                
+                         <button className="group flex items-center gap-4 bg-[#003366] text-white px-10 py-6 rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-[#E63946] transition-all shadow-xl hover:shadow-[#E63946]/20">
                     Contact Us
                     <ArrowUpRight className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </button>
+                </Link>
             </div>
             
             {/* الجزء البصري - Visual Side */}

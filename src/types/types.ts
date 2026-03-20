@@ -34,14 +34,15 @@ export const eventsReducer = (state: EventsState, action: EventsAction): EventsS
         events: state.events.filter((event) => event.id !== action.id),
       };
 
-    case "UPDATE_EVENT":
-      return {
-        ...state,
-        events: state.events.map((event) =>
-          event.id === action.payload.id ? action.payload : event
-        ),
-      };
-
+case "UPDATE_EVENT":
+  return {
+    ...state,
+    events: state.events.map((event) =>
+      event.id === action.payload.id 
+        ? { ...event, ...action.payload } // دمج البيانات القديمة مع التحديث لضمان عدم فقدان الـ created_at
+        : event
+    ),
+  };
     case "TOGGLE_EDITOR":
       return {
         ...state,

@@ -17,7 +17,7 @@ export default function Page() {
   const coursesPromise = getCourses();
 
   return (
-    <div className="bg-[#fafafa]">
+    <div className="">
       {/* Suspense يضمن ظهور الهيكل الأساسي فوراً وحالة التحميل */}
       <Suspense fallback={<CoursesSkeleton />}>
         <CoursesPageClient coursesPromise={coursesPromise} />
