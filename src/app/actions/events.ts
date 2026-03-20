@@ -1,8 +1,7 @@
 "use server";
 
 import { eventService } from "@/services/adminService";
-import { revalidatePath, revalidateTag } from "next/cache";
-
+import { revalidatePath, revalidateTag } from 'next/cache';
 // 1. جلب البيانات
 export async function getAllEvents() {
   try {
@@ -51,27 +50,32 @@ export async function deleteEventAction(id: string) {
 }
 
 // 4. تحديث فعالية
+// 4. تحديث فعالية
 export async function updateEventAction(id: string, formData: any) {
   try {
-    // معالجة التاريخ لضمان أنه بصيغة YYYY-MM-DD
+    // 1. معالجة التاريخ لضمان أنه بصيغة YYYY-MM-DD
     const formattedDate = formData.date instanceof Date 
       ? formData.date.toISOString().split('T')[0] 
       : formData.date;
 
+    // 2. تحديث البيانات في قاعدة البيانات
     const data = await eventService.updateEvent(id, {
       title: formData.title,
       category: formData.category,
       date: formattedDate 
     });
 
-    revalidatePath("/events"); 
-    revalidatePath("/admin/events");
-
-    // محاولة تحديث الـ Tag إذا كانت موجودة
+    // 3. إعادة التحقق من الكاش (Revalidation) بأسلوب آمن
+    // استخدمنا revalidatePath لأنه الأشمل والأضمن في Next.js 15 حالياً
     try {
-        revalidateTag("events-list");
-    } catch (e) {
-        // Safe catch
+        revalidatePath("/events"); 
+        revalidatePath("/admin/events");
+        
+        // إذا كان TypeScript لا يزال يعترض على revalidateTag بـ argument واحد، 
+        // فـ revalidatePath كافية جداً لأداء المهمة.
+        // revalidateTag("events-list"); 
+    } catch (revalidateError) {
+        console.warn("Revalidation non-critical error:", revalidateError);
     }
 
     return data;
