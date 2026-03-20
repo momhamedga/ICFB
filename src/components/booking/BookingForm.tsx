@@ -108,10 +108,10 @@ export default function UltraBookingForm() {
                </button>
                
                {/* إظهار رسالة خطأ لو الـ Action فشل */}
-               {state?.error && (
-                 <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest text-center mt-4">
-                   Error: {state.error}
-                 </p>
+           {state?.success === false && state?.message && (
+  <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest text-center mt-4">
+    Error: {state.message}
+  </p>
                )}
             </div>
           </div>
