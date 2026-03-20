@@ -5,17 +5,39 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Briefcase, HeartPulse, Target, Users, Globe, 
   Stethoscope, Sparkles, User, GraduationCap,
-  DollarSign
+  BarChart3, Lightbulb, TrendingUp
 } from "lucide-react";
 
 // استدعاء المكون المنفصل
 import BookingForm from "@/components/BookingForm";
 
 type CoachingTab = "overview" | "coaches" | "booking";
+
+// --- Data: الأسلوب الأحدث بتخزين المكون نفسه ---
 const COACHING_SERVICES = [
-  { label: "Business", icon: Briefcase }, // لاحظ مفيش أقواس < />
-  { label: "Financial", icon: DollarSign },
+  { label: "Executive", icon: Users, description: "Leadership development for top-tier management." },
+  { label: "Strategic", icon: Target, description: "Aligning business goals with actionable roadmaps." },
+  { label: "Corporate", icon: Briefcase, description: "Institutional growth and professional evolution." },
+  { label: "Performance", icon: BarChart3, description: "Maximizing efficiency and output standards." },
+  { label: "Innovation", icon: Lightbulb, description: "Creative problem solving and ultra-modern logic." },
+  { label: "Scalability", icon: TrendingUp, description: "Expansion strategies for global market presence." },
 ];
+
+const OVERVIEW_ICONS = [
+  { icon: Briefcase, label: "Executive" },
+  { icon: Stethoscope, label: "Emergency" },
+  { icon: Target, label: "Career" },
+  { icon: HeartPulse, label: "Wellbeing" },
+  { icon: Users, label: "Group" },
+  { icon: Globe, label: "Team" },
+];
+
+const COACHES_DATA = [
+  { name: "Judith Barton", role: "Executive Coach", icon: User },
+  { name: "Global Expert", role: "Mentor Supervisor", icon: GraduationCap },
+  { name: "Team Lead", role: "Business Strategist", icon: Briefcase },
+];
+
 export default function CoachingPage() {
   const [activeTab, setActiveTab] = useState<CoachingTab>("overview");
 
@@ -70,7 +92,7 @@ export default function CoachingPage() {
             activeClass="bg-[#003366] text-white shadow-lg shadow-blue-900/20"
           />
           <TabButton 
-            label="Our Coaches" 
+            label="Services" 
             isActive={activeTab === "coaches"} 
             onClick={() => setActiveTab("coaches")}
             activeClass="bg-[#E63946] text-white shadow-lg shadow-red-900/20"
@@ -118,51 +140,49 @@ function OverviewSection() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
-        {[
-          { icon: <Briefcase />, label: "Executive" },
-          { icon: <Stethoscope />, label: "Emergency" },
-          { icon: <Target />, label: "Career" },
-          { icon: <HeartPulse />, label: "Wellbeing" },
-          { icon: <Users />, label: "Group" },
-          { icon: <Globe />, label: "Team" },
-        ].map((s, i) => (
-          <motion.div whileHover={{ y: -10 }} key={i} className="p-8 bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all flex flex-col items-center gap-4 group">
-            <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#003366] group-hover:text-white transition-all">
-              {React.cloneElement(s.icon as React.ReactElement, { size: 28 })}
-            </div>
-            <span className="font-black uppercase text-xs tracking-widest text-gray-500 group-hover:text-[#003366]">{s.label} Coaching</span>
-          </motion.div>
-        ))}
+        {OVERVIEW_ICONS.map((s, i) => {
+          const Icon = s.icon;
+          return (
+            <motion.div 
+              whileHover={{ y: -10 }} 
+              key={i} 
+              className="p-8 bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all flex flex-col items-center gap-4 group"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#003366] group-hover:text-white transition-all">
+                <Icon size={28} />
+              </div>
+              <span className="font-black uppercase text-xs tracking-widest text-gray-500 group-hover:text-[#003366]">{s.label} Coaching</span>
+            </motion.div>
+          );
+        })}
       </div>
     </motion.div>
   );
 }
 
-// --- Component: Coaches Grid (Modernized) ---
+// --- Component: Coaches Grid ---
 function CoachesGrid() {
-  const coaches = [
-    { name: "Judith Barton", role: "Executive Coach", icon: <User /> },
-    { name: "Global Expert", role: "Mentor Supervisor", icon: <GraduationCap /> },
-    { name: "Team Lead", role: "Business Strategist", icon: <Briefcase /> },
-  ];
-
   return (
     <motion.div 
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
       className="grid md:grid-cols-3 gap-8"
     >
       {COACHING_SERVICES.map((s, i) => {
-  const Icon = s.icon; // بنحول الـ Reference لمكون (Capital Letter)
-  return (
-    <div key={i} className="group">
-      <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center">
-        {/* نمرر الخصائص مباشرة كأنها Component عادي */}
-        <Icon size={28} className="group-hover:text-white transition-all" />
-      </div>
-      <span>{s.label} Coaching</span>
-    </div>
-  );
-})}
+        const Icon = s.icon;
+        return (
+          <motion.div 
+            key={i} 
+            whileHover={{ scale: 1.02 }}
+            className="p-8 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-2xl transition-all group"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-[#003366]/5 flex items-center justify-center text-[#003366] mb-6 group-hover:bg-[#E63946] group-hover:text-white transition-all">
+              <Icon size={28} />
+            </div>
+            <h3 className="font-black text-xl text-[#003366] mb-2 uppercase tracking-tight">{s.label}</h3>
+            <p className="text-gray-500 text-sm leading-relaxed">{s.description}</p>
+          </motion.div>
+        );
+      })}
     </motion.div>
   );
 }
