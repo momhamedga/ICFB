@@ -29,7 +29,7 @@ async function processEmail(formData: FormData, type: string) {
       // استخدام الدومين الموثق الخاص بك [cite: 2026-03-20]
       from: 'ICFB System <info@britishacademy-ss.com>', 
       to: ['info@britishacademy-ss.com'], 
-      reply_to: senderEmail,
+      replyTo: senderEmail,
       subject: `[${type.toUpperCase()}] - Uplink from ${name}`,
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; border: 1px solid #f0f0f0; border-radius: 24px; overflow: hidden; background-color: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
