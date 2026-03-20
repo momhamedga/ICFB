@@ -2,23 +2,30 @@
 
 import { useActionState, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, User, Mail, Phone, MessageSquare, ChevronDown, Check, Loader2, Sparkles } from "lucide-react";
+import { Send, User, Mail, Phone, ChevronDown, Check, Loader2, Sparkles } from "lucide-react";
 import { sendBookingAction } from "@/app/actions/booking";
 import { FormInput } from "./FormInput";
 
-const options = ["Executive Coaching", "Cancer Coaching", "Career Coaching", "Team Coaching"] as const;
+// 1. تعريف المصفوفة بره عشان الـ Map يشتغل صح
+const options: CoachingType[] = [
+  "Executive Coaching",
+  "Career Coaching",
+  "Team Coaching",
+  "Cancer Coaching"
+];
+
+type CoachingType = "Executive Coaching" | "Career Coaching" | "Team Coaching" | "Cancer Coaching";
 
 export default function UltraBookingForm() {
-  // React 19 useActionState
   const [state, formAction, isPending] = useActionState(sendBookingAction, null);
-  const [selected, setSelected] = useState(options[0]);
+  const [selected, setSelected] = useState<CoachingType>("Executive Coaching");
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
   return (
     <section className="min-h-screen bg-white py-10 md:py-24 px-4">
       <div className="max-w-5xl mx-auto">
         
-        {/* Header - Mobile Optimized */}
+        {/* Header */}
         <div className="mb-12 md:mb-20 space-y-4">
           <motion.div initial={{opacity:0}} animate={{opacity:1}} className="flex items-center gap-2 justify-center md:justify-start">
              <Sparkles size={14} className="text-red-600 animate-pulse" />
@@ -30,16 +37,15 @@ export default function UltraBookingForm() {
         </div>
 
         <form action={formAction} className="relative group">
-          {/* Glass Card */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 bg-[#000d1a] p-6 md:p-16 rounded-[3rem] md:rounded-[5rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border border-white/5">
             
             <div className="space-y-8">
               <FormInput label="Identity" name="from_name" icon={<User size={18}/>} placeholder="Full Name" />
+              {/* تأكد أن "reply_to" هو نفس الاسم المتوقع في الـ Server Action */}
               <FormInput label="Digital" name="reply_to" type="email" icon={<Mail size={18}/>} placeholder="Email Address" />
             </div>
 
             <div className="space-y-8">
-               {/* Custom Modern Select */}
                <div className="space-y-3 relative">
                  <label className="text-[10px] font-black uppercase text-white/20 tracking-[0.3em] ml-2">Objective</label>
                  <input type="hidden" name="coaching_type" value={selected} />
@@ -63,7 +69,7 @@ export default function UltraBookingForm() {
                          <div 
                            key={opt}
                            onClick={() => { setSelected(opt); setIsSelectOpen(false); }}
-                           className="p-5 hover:bg-red-600 text-white/70 hover:text-white transition-all text-xs font-black uppercase tracking-widest cursor-pointer flex justify-between"
+                           className="p-5 hover:bg-red-600 text-white/70 hover:text-white transition-all text-xs font-black uppercase tracking-widest cursor-pointer flex justify-between items-center"
                          >
                            {opt} {selected === opt && <Check size={14} />}
                          </div>
@@ -100,6 +106,13 @@ export default function UltraBookingForm() {
                    )}
                  </AnimatePresence>
                </button>
+               
+               {/* إظهار رسالة خطأ لو الـ Action فشل */}
+               {state?.error && (
+                 <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest text-center mt-4">
+                   Error: {state.error}
+                 </p>
+               )}
             </div>
           </div>
         </form>
