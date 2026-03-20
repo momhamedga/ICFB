@@ -4,12 +4,12 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, Search, Download, Copy, AlertCircle, Loader2, Check } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { ICertificate } from "@/types"; // استيراد الأنواع
+import { Certificate } from "crypto";
 
 export default function CertificateVerifier() {
   const [certCode, setCertCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [result, setResult] = useState<ICertificate | null>(null);
+  const [result, setResult] = useState<Certificate | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
 
@@ -38,7 +38,7 @@ export default function CertificateVerifier() {
         .from("certificates")
         .select("*")
         .eq("cert_code", code)
-        .returns<ICertificate>() // ضمان نوع البيانات العائدة من Supabase
+        .returns<Certificate>() // ضمان نوع البيانات العائدة من Supabase
         .single();
 
       if (dbError || !data) {
