@@ -156,7 +156,16 @@ export default function ICFBHeader() {
   {/* الـ Portal Items برضه جوه نفس الـ Scroll Area */}
   <div className="pt-6 border-t border-zinc-100 space-y-3">
     <PortalItem href="/student/dashboard" icon={<FileBadge size={22}/>} title="Student" sub="Certification Library" activeColor={brandRed} isMobile={true} setIsOpen={setIsOpen} />
-    <PortalItem href="/admin" icon={<LayoutGrid size={22}/>} title="Admin" sub="Full Terminal Control" activeColor={brandNavy} isMobile={true} setIsOpen={setIsOpen} />
+
+<PortalItem 
+  href="/admin" 
+  icon={<LayoutGrid size={18}/>} 
+  title="Admin" 
+  sub="Control Terminal" 
+  activeColor={brandNavy} 
+  isMobile={false} 
+  setIsOpen={setIsOpen} 
+/>
   </div>
 </div>
 

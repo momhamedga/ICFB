@@ -1,22 +1,14 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-// 1. تغيير اسم الـ Function من middleware إلى proxy
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
+    request: { headers: request.headers },
   })
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!supabaseUrl || !supabaseAnonKey) return response
-
   const supabase = createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() { return request.cookies.getAll() },
@@ -35,11 +27,16 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
   
-  const isAdminPath = request.nextUrl.pathname.startsWith('/admin')
-  const isLoginPage = request.nextUrl.pathname === '/admin/login'
+  const pathname = request.nextUrl.pathname
+  const isAdminPath = pathname.startsWith('/admin')
+  // استخدام startsWith عشان نتجنب مشكلة السلاش الزائدة
+  const isLoginPage = pathname.startsWith('/admin/login')
 
+  // منع الدخول لأي صفحة في /admin إلا لو كان مسجل دخول أو في صفحة اللوجن
   if (isAdminPath && !user && !isLoginPage) {
-    return NextResponse.redirect(new URL('/admin/login', request.url))
+    const url = request.nextUrl.clone()
+    url.pathname = '/admin/login'
+    return NextResponse.redirect(url)
   }
 
   return response
@@ -47,7 +44,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-
+    // استثناء ملفات الـ Static والصور عشان الـ Middleware ميعطلش تحميلها
     '/((?!api|_next/static|_next/image|favicon.ico|images|.*\\..*).*)',
   ],
 }
