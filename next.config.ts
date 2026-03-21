@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // الـ React Compiler ميزة قوية بس ساعات بتعمل تضارب في الـ Chunks لو الـ Cache قديم
   reactCompiler: true,
   
   images: {
@@ -13,15 +12,13 @@ const nextConfig: NextConfig = {
         pathname: '/storage/v1/object/public/**',
       },
     ],
-    // unoptimized مفيد جداً للصور، بس تأكد إن الـ Loader مش متعارض
     unoptimized: true, 
   },
 
-  // ➕ ضيف السطر ده عشان تجبر Next.js ينضف الـ Build القديم تماماً
+  // ✅ تفعيل هذا السطر إلزامي لاستضافات Hostinger و VPS
+  output: 'standalone', 
+
   generateEtags: false, 
-  
-  // تأكد إن الـ Output سليم لو شغال على استضافة عادية
-  // output: 'standalone', // فك الضغط عن السطر ده لو شغال على Hostinger VPS
 };
 
 export default nextConfig;
