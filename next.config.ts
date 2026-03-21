@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactCompiler: true,
   
+  // 1. أضف هذا السطر لضمان قراءة المسارات بشكل صحيح في الاستضافات المشتركة
+  trailingSlash: true, 
+
   images: {
     remotePatterns: [
       {
@@ -15,9 +18,7 @@ const nextConfig: NextConfig = {
     unoptimized: true, 
   },
 
-  // ✅ تفعيل هذا السطر إلزامي لاستضافات Hostinger و VPS
   output: 'standalone', 
-
   generateEtags: false, 
 };
 
