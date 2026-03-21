@@ -4,20 +4,21 @@ import { useHeaderLogic } from "@/hooks/useHeaderLogic";
 import { NavLink } from "./NavLink";
 import MagneticWrapper from "../ui/MagneticWrapper";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
-import { Mail, Phone, User, Award, Shield, Menu, X, Sparkles, ArrowRight, Globe, Layers, Zap } from "lucide-react";
+import { 
+  Mail, Phone, User, Award, Shield, Menu, X, Sparkles, 
+  ArrowRight, Globe, Layers, Zap, FileBadge, LayoutGrid 
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function ICFBHeader() {
-  const { scrolled, isOpen, setIsOpen, portalOpen, setPortalOpen, hoveredPath, setHoveredPath, pathname } = useHeaderLogic();
+  const { 
+    scrolled, isOpen, setIsOpen, portalOpen, setPortalOpen, 
+    hoveredPath, setHoveredPath, pathname 
+  } = useHeaderLogic();
   
   const brandNavy = "#003366";
   const brandRed = "#E63946";
-
-  // Motion values لعمل تأثير السحب للقفل في الموبايل
-  const dragY = useMotionValue(0);
-  const opacity = useTransform(dragY, [0, 200], [1, 0]);
-  const scale = useTransform(dragY, [0, 200], [1, 0.9]);
 
   const navItems = [
     { name: "Home", href: "/", icon: <Layers size={18}/> },
@@ -31,7 +32,7 @@ export default function ICFBHeader() {
 
   return (
     <header className="fixed top-0 w-full z-[100] font-sans px-4 md:px-0">
-      {/* 1. Desktop Top Bar (يبقى كما هو) */}
+      {/* 1. Desktop Top Bar */}
       <AnimatePresence>
         {!scrolled && (
           <motion.div 
@@ -92,9 +93,9 @@ export default function ICFBHeader() {
               <AnimatePresence>
                 {portalOpen && (
                   <motion.div initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                    className="absolute top-full right-0 mt-4 w-56 bg-white/95 backdrop-blur-xl rounded-[1.5rem] p-2 shadow-2xl border border-[#003366]/5 z-50">
-                    <PortalItem href="/student/dashboard" icon={<Award size={16}/>} title="Student" sub="Certification" activeColor={brandRed} />
-                    <PortalItem href="/admin" icon={<Shield size={16}/>} title="Admin" sub="Control" activeColor={brandNavy} />
+                    className="absolute top-full right-0 mt-4 w-64 bg-white/95 backdrop-blur-xl rounded-[1.5rem] p-2 shadow-2xl border border-[#003366]/5 z-50">
+                    <PortalItem href="/student/dashboard" icon={<FileBadge size={18}/>} title="Student" sub="Certification" activeColor={brandRed} isMobile={false} setIsOpen={setIsOpen} />
+                    <PortalItem href="/admin" icon={<LayoutGrid size={18}/>} title="Admin" sub="Control Terminal" activeColor={brandNavy} isMobile={false} setIsOpen={setIsOpen} />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -107,80 +108,96 @@ export default function ICFBHeader() {
         </nav>
       </div>
 
-      {/* 3. The New "Mobile App" Hub Experience */}
+      {/* 3. The New "Side Drawer" Experience */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-[#003366]/60 backdrop-blur-xl z-[200] flex items-end sm:items-center justify-center px-4 xl:hidden"
-            onClick={() => setIsOpen(false)}
-          >
+          <div className="fixed inset-0 z-[200] xl:hidden">
             <motion.div 
-              style={{ y: dragY, opacity, scale }}
-              drag="y"
-              dragConstraints={{ top: 0, bottom: 200 }}
-              dragElastic={0.2}
-              onDragEnd={(_, info) => info.offset.y > 100 && setIsOpen(false)}
-              initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: "100%", opacity: 0 }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="w-full max-w-md bg-white rounded-t-[3rem] sm:rounded-[3rem] shadow-[0_-20px_80px_rgba(0,0,0,0.4)] overflow-hidden"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="absolute inset-0 bg-[#003366]/40 backdrop-blur-sm"
+            />
+
+            <motion.div 
+              initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="absolute top-0 right-0 h-full w-[85%] max-w-sm bg-white shadow-[-20px_0_60px_rgba(0,0,0,0.2)] flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Drag Handle for Mobile */}
-              <div className="w-12 h-1.5 bg-zinc-200 rounded-full mx-auto mt-4 mb-2 sm:hidden" />
-
               <div className="bg-[#003366] p-8 flex justify-between items-center">
                 <div className="flex flex-col">
-                  <span className="text-white text-2xl font-black italic leading-none">SYSTEM_HUB</span>
-                  <span className="text-[#E63946] text-[8px] font-black uppercase tracking-[0.5em] mt-2">Active Protocol</span>
+                  <span className="text-white text-2xl font-black italic leading-none">IC_FB</span>
+                  <span className="text-[#E63946] text-[8px] font-black uppercase tracking-[0.5em] mt-2">BRITISH ACADEMY</span>
                 </div>
-                <button onClick={() => setIsOpen(false)} className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white active:bg-red-600 transition-colors">
+                <button onClick={() => setIsOpen(false)} className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white active:scale-90 transition-all">
                   <X size={18} />
                 </button>
               </div>
 
-              {/* Grid Layout inspired by Modern Dashboard Apps */}
-              <div className="p-4 grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
-                {navItems.map((item, idx) => (
-                  <motion.div key={item.name} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.05 }}>
-                    <Link href={item.href} onClick={() => setIsOpen(false)} className="flex flex-col items-center justify-center p-6 bg-zinc-50 border border-[#003366]/5 rounded-[2rem] active:bg-[#E63946]/5 active:border-[#E63946]/20 transition-all group">
-                      <div className="mb-3 p-3 bg-white rounded-2xl shadow-sm text-[#003366] group-active:text-[#E63946] group-active:scale-110 transition-all">
-                        {item.icon}
-                      </div>
-                      <span className="text-[10px] font-black text-[#003366] uppercase tracking-tighter text-center">{item.name}</span>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
+           {/* Navigation List - المنيو الطولية الجديدة */}
+<div className="flex-1 overflow-y-auto p-6 space-y-2 custom-scroll-area"> 
+  {/* ضفنا الكلاس هنا ^ لضمان تطبيق الاستايل المودرن */}
+  
+  {navItems.map((item, idx) => (
+    <motion.div key={item.name} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.05 }}>
+      <Link 
+        href={item.href} 
+        onClick={() => setIsOpen(false)} 
+        className="flex items-center gap-5 p-5 bg-zinc-50/50 border border-[#003366]/5 rounded-2xl active:bg-[#E63946]/5 active:border-[#E63946]/20 transition-all group"
+      >
+        <div className="p-3 bg-white rounded-xl shadow-sm text-[#003366] group-active:text-[#E63946] transition-all">
+          {item.icon}
+        </div>
+        <span className="text-[11px] font-black text-[#003366] uppercase tracking-[0.1em]">{item.name}</span>
+      </Link>
+    </motion.div>
+  ))}
 
-              {/* High-Impact Contact Button */}
-              <div className="p-6 pt-2">
-                <Link href="/contact" onClick={() => setIsOpen(false)} className="relative flex items-center justify-center w-full p-6 bg-gradient-to-r from-[#003366] to-[#004d99] rounded-[2rem] text-white shadow-xl overflow-hidden group active:scale-95 transition-all">
-                  <div className="absolute inset-0 bg-[#E63946] translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-                  <div className="relative z-10 flex items-center gap-3">
-                    <span className="font-black uppercase text-xs tracking-widest">Connect Now</span>
-                    <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
-                  </div>
+  {/* الـ Portal Items برضه جوه نفس الـ Scroll Area */}
+  <div className="pt-6 border-t border-zinc-100 space-y-3">
+    <PortalItem href="/student/dashboard" icon={<FileBadge size={22}/>} title="Student" sub="Certification Library" activeColor={brandRed} isMobile={true} setIsOpen={setIsOpen} />
+    <PortalItem href="/admin" icon={<LayoutGrid size={22}/>} title="Admin" sub="Full Terminal Control" activeColor={brandNavy} isMobile={true} setIsOpen={setIsOpen} />
+  </div>
+</div>
+
+              <div className="p-6 border-t border-zinc-100">
+                <Link href="/contact" onClick={() => setIsOpen(false)} className="flex items-center justify-center w-full p-6 bg-[#003366] rounded-2xl text-white shadow-lg active:scale-95 transition-all gap-3">
+                  <span className="font-black uppercase text-[10px] tracking-[0.2em]">Connect Now</span>
+                  <ArrowRight size={16} />
                 </Link>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </header>
   );
 }
 
-function PortalItem({ href, icon, title, sub, activeColor }: any) {
+// 🛠️ Modified PortalItem to handle both Desktop and Mobile layout
+function PortalItem({ href, icon, title, sub, activeColor, isMobile, setIsOpen }: any) {
   return (
-    <Link href={href} className="flex items-center gap-4 p-4 hover:bg-[#003366]/5 rounded-2xl transition-all group active:scale-95">
-      <div className="w-10 h-10 bg-zinc-50 rounded-xl flex items-center justify-center shadow-inner group-hover:bg-white group-hover:shadow-md transition-all" style={{ color: activeColor }}>
-        {icon}
-      </div>
-      <div className="leading-tight">
-        <p className="text-xs font-black text-[#003366]">{title}</p>
-        <p className="text-[8px] text-zinc-400 uppercase font-black tracking-widest mt-0.5">{sub}</p>
-      </div>
-    </Link>
+    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+      <Link 
+        href={href} 
+        onClick={() => setIsOpen(false)}
+        className={`flex items-center gap-4 transition-all group active:scale-95
+          ${isMobile 
+            ? "p-6 bg-zinc-50 border border-[#003366]/5 rounded-3xl" 
+            : "p-4 hover:bg-[#003366]/5 rounded-2xl"}`}
+      >
+        <div className={`flex items-center justify-center shadow-inner group-active:bg-white transition-all
+          ${isMobile ? "w-14 h-14 bg-white rounded-2xl" : "w-10 h-10 bg-zinc-50 rounded-xl"}`} 
+          style={{ color: activeColor }}
+        >
+          {icon}
+        </div>
+        <div className="leading-tight flex-1">
+          <p className={`${isMobile ? "text-sm" : "text-xs"} font-black text-[#003366] uppercase tracking-wider`}>{title}</p>
+          <p className={`${isMobile ? "text-[9px]" : "text-[8px]"} text-zinc-400 uppercase font-black tracking-widest mt-1`}>{sub}</p>
+        </div>
+        {isMobile && <ArrowRight size={16} className="text-zinc-300" />}
+      </Link>
+    </motion.div>
   );
 }

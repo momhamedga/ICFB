@@ -81,72 +81,73 @@ body {
   background-color: var(--color-primary) !important;
   border-radius: 10px !important;
 }
-/* --- Custom Modern Scrollbar Protocol --- */
 
-/* 1. التخصيص للمتصفحات الحديثة (Chrome, Safari, Edge) */
+
+
+/* 1. التخصيص للمتصفحات الحديثة */
 ::-webkit-scrollbar {
-  width: 8px; /* عرض نحيف جداً وأنيق */
-  height: 8px;
+  width: 6px; /* أنحف وأشيك */
+  height: 6px;
 }
 
-/* خلفية المجرى - نجعلها شفافة تماماً لدمجها مع الـ Grid Background */
+/* المجرى - شفاف تماماً عشان ميقطعش الـ Background Grid */
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 
-/* المقبض (Thumb) - هنا يكمن الإبداع */
+/* المقبض (Thumb) - تصميم زجاجي عائم */
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 51, 102, 0.1); /* لون أزرق خافت جداً في البداية */
-  border-radius: 100px;
-  border: 2px solid transparent; /* مسافة أمان تجعل الشريط يبدو "عائماً" */
+  /* نستخدم الـ Scrollbar-color الأساسي بتاع البراند بس بشفافية عالية */
+  background-color: rgba(0, 51, 102, 0.08); 
+  border-radius: 20px;
+  /* خدعة الـ transparent border مع الـ content-box بتخلي الشريط "عائم" بعيد عن الحافة */
+  border: 2px solid transparent;
   background-clip: content-box;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.3s ease;
 }
 
-/* عند التحويم (Hover) - يتحول للهوية الحمراء النيون */
+/* عند التحويم (Hover) - تأثير نيون هادئ */
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #E63946;
-  box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
+  background-color: #E63946; /* هويتك الحمراء */
+  /* نكتفي بتغيير اللون بدون Shadow تقيل عشان الـ Performance */
 }
 
-/* عند الضغط (Active) - يصبح أكثر حدة */
+/* عند الضغط (Active) */
 ::-webkit-scrollbar-thumb:active {
   background-color: #b91c1c;
 }
 
-/* 2. التخصيص لمتصفح Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(230, 57, 70, 0.4) transparent;
+/* 2. التخصيص لـ Firefox (أبسط وأخف) */
+@supports (scrollbar-width: thin) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 51, 102, 0.2) transparent;
+  }
 }
 
-/* 3. لمسة إبداعية للموبايل (Touch Devices) */
+/* 3. لمسة الموبايل - إخفاء ذكي */
 @media (max-width: 768px) {
-  /* في الموبايل، يفضل إخفاء الشريط تماماً أو جعله نحيفاً جداً لتوفير مساحة الرؤية */
+  /* في الموبايل بنخلي الـ Scrollbar يظهر بس وقت الحركة وبشكل شبه شفاف */
   ::-webkit-scrollbar {
-    width: 3px;
+    width: 2px;
   }
-  
   ::-webkit-scrollbar-thumb {
-    background: rgba(230, 57, 70, 0.2); /* لمسة حمراء خفيفة جداً */
+    background-color: rgba(230, 57, 70, 0.15);
   }
 }
 
-/* 4. كلاس إضافي للـ Containers الداخلية اللي فيها سكرول */
+/* 4. كلاس احترافي للـ Containers (زي الـ Side Menu اللي عملناها) */
 .custom-scroll-area {
   overflow-y: auto;
-  scrollbar-gutter: stable; /* يمنع اهتزاز المحتوى عند ظهور الشريط */
+  /* يمنع القفزة المزعجة للمحتوى لما الـ Scrollbar يظهر ويختفي */
+  scrollbar-gutter: stable; 
 }
 
-/* 5. Progress Indicator (اختياري لكنه مبدع) */
-/* إذا أردت شريط تقدم علوي يملأ الصفحة أثناء السكرول */
-.scroll-progress-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(to right, #003366, #E63946);
-  transform-origin: 0%;
-  z-index: 9999;
+/* 5. Hide Scrollbar Class (لو محتاج تخفيه في مكان معين) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
